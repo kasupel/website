@@ -1,0 +1,93 @@
+@import variables
+
+body
+  font-family: sans-serif
+  margin: 0
+  color: $text-colour
+
+nav
+  display: flex
+  width: 100%
+  box-shadow: 0 2px 2px 1px black
+
+  a
+    padding: 1.5rem
+
+.button
+  text-decoration: none
+  color: $secondary-text-colour
+  transition: background 0.5s
+  transition: color 0.5s
+
+  &:hover
+    background: $button-bg
+    color: $button-hover-colour
+
+  &:active
+    background: $button-active-bg
+
+.big-button
+  border-radius: 3rem
+  padding: 1rem
+  background: $button-bg
+  font-size: 1.5rem
+
+.forwards-button:after
+  content: " ➜"
+  font-size: 2rem
+  animation: arrow-push 2s
+  animation-iteration-count: infinite
+  margin-right: 0.5rem
+
+@keyframes arrow-push
+  0%
+    margin-left: 0
+    margin-right: 0.5rem
+
+  10%
+    margin-left: 0.5rem
+    margin-right: 0
+
+  20%
+    margin-left: 0
+    margin-right: 0.5rem
+
+  22%
+    margin-left: 0
+    margin-right: 0.5rem
+
+  32%
+    margin-left: 0.5rem
+    margin-right: 0
+
+  42%
+    margin-left: 0
+    margin-right: 0.5rem
+
+footer
+  background: $footer-bg
+  display: flex
+  flex-direction: column
+  align-items: center
+  padding: 0.5rem
+  text-align: center
+
+  .footer-links
+    display: inline-block
+    padding: 0
+    text-align: center
+
+    li
+      display: inline
+
+      a
+        color: black
+        white-space: nowrap
+
+      &:after
+        /* Seperate links with bullet points. */
+        /* We use a radial background to create the bullet points, so that */
+        /* it won't be shown at the end of lines with no link after it. */
+        content: " "
+        letter-spacing: 1rem
+        background: 50% 50% no-repeat radial-gradient(circle at center, black 2px, transparent 3px)

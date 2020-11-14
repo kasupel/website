@@ -1,0 +1,30 @@
+{
+  "name": "kasupel-website",
+  "version": "0.0.0",
+  "description": "A website providing a public UI to the Kasupel API.",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kasupel/website.git"
+  },
+  "author": "Artemis",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/kasupel/website/issues"
+  },
+  "homepage": "https://github.com/kasupel/website#readme",
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-nunjucks": "^2.2.5",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "node-sass-middleware": "0.11.0",
+    "nunjucks": "^3.2.2"
+  }
+}

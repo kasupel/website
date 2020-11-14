@@ -1,0 +1,65 @@
+.chessboard {
+  /* An HTML table styled to look like a chessboard. */
+  flex-shrink: 0;
+  border-radius: 12.5%;
+  width: 32rem;
+  height: 32rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 15px 15px 50px 1px;
+  margin: 2em; }
+  .chessboard tbody {
+    height: 100%; }
+  .chessboard tr {
+    display: flex;
+    height: 12.5%; }
+  .chessboard tr:nth-child(even) > td:nth-child(odd),
+  .chessboard tr:nth-child(odd) > td:nth-child(even) {
+    background: #8b6533;
+    width: 12.5%; }
+  .chessboard tr:nth-child(even) > td:nth-child(even),
+  .chessboard tr:nth-child(odd) > td:nth-child(odd) {
+    background: #ffffff;
+    width: 12.5%; }
+  .chessboard:after {
+    /* Add a big rook on top of the chess board. */
+    background: url(/static/images/logo.svg) no-repeat center center/54% 66%;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin-top: -100%;
+    content: ''; }
+
+.main-text {
+  flex-shrink: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem; }
+  .main-text > *:not(:first-child) {
+    margin-top: 1rem; }
+
+h1 {
+  font-size: 5rem;
+  padding: 0;
+  margin: 0;
+  padding-left: 0.5rem; }
+
+h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  color: #444444;
+  padding: 0;
+  margin: 0;
+  padding-left: 1rem; }
+
+main {
+  display: flex;
+  justify-content: center; }
+
+@media screen and (max-width: 1000px) {
+  /* Make the chessboard go on a second line on smaller screens. */
+  main {
+    flex-direction: column;
+    align-items: center; } }

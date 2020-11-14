@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel='stylesheet' href='/static/css/style.css'/>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="button">Home</a>
+      <a href="#" class="button">Play</a>
+      <a href="#" class="button">Logout</a>
+    </nav>
+    <main>
+      {% block body %}{% endblock %}
+    </main>
+    <footer>
+      <ul class="footer-links">
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Contribute</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Terms of Service</a></li>
+      </ul>
+      <p>We hope you enjoy this site. Feel free to contact us using the link above if you have any questions, complaints or suggestions.</p>
+      <p>© Kasupel 2020</p>
+    </footer>
+  </body>
+</html>

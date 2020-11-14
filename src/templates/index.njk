@@ -1,0 +1,21 @@
+{% extends "base.njk" %}
+{% block head %}
+  <link rel='stylesheet' href='/static/css/index.css'/>
+  <title>Kasupel</title>
+{% endblock %}
+{% block body %}
+  <div class="main-text">
+    <h1 style="font-size:min(5rem, 15vw)">Welcome to Kasupel!</h1>
+    <h2 style="font-size:min(2rem, 10vw)">Play chess in ways you've never known.</h2>
+    <a href="#" class="button big-button forwards-button">Get Started</a>
+  </div>
+  <table class="chessboard">
+    {% for i in range(0, 8) %}
+      <tr>
+      {% for j in range(0, 8) %}
+        <td></td>
+      {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

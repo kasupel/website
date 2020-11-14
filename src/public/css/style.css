@@ -1,0 +1,80 @@
+@charset "UTF-8";
+body {
+  font-family: sans-serif;
+  margin: 0;
+  color: #000000; }
+
+nav {
+  display: flex;
+  width: 100%;
+  box-shadow: 0 2px 2px 1px black; }
+  nav a {
+    padding: 1.5rem; }
+
+.button {
+  text-decoration: none;
+  color: #444444;
+  transition: background 0.5s;
+  transition: color 0.5s; }
+  .button:hover {
+    background: #d8d8d8;
+    color: #000000; }
+  .button:active {
+    background: #aaaaaa; }
+
+.big-button {
+  border-radius: 3rem;
+  padding: 1rem;
+  background: #d8d8d8;
+  font-size: 1.5rem; }
+
+.forwards-button:after {
+  content: " ➜";
+  font-size: 2rem;
+  animation: arrow-push 2s;
+  animation-iteration-count: infinite;
+  margin-right: 0.5rem; }
+
+@keyframes arrow-push {
+  0% {
+    margin-left: 0;
+    margin-right: 0.5rem; }
+  10% {
+    margin-left: 0.5rem;
+    margin-right: 0; }
+  20% {
+    margin-left: 0;
+    margin-right: 0.5rem; }
+  22% {
+    margin-left: 0;
+    margin-right: 0.5rem; }
+  32% {
+    margin-left: 0.5rem;
+    margin-right: 0; }
+  42% {
+    margin-left: 0;
+    margin-right: 0.5rem; } }
+
+footer {
+  background: #bbbbbb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  text-align: center; }
+  footer .footer-links {
+    display: inline-block;
+    padding: 0;
+    text-align: center; }
+    footer .footer-links li {
+      display: inline; }
+      footer .footer-links li a {
+        color: black;
+        white-space: nowrap; }
+      footer .footer-links li:after {
+        /* Seperate links with bullet points. */
+        /* We use a radial background to create the bullet points, so that */
+        /* it won't be shown at the end of lines with no link after it. */
+        content: " ";
+        letter-spacing: 1rem;
+        background: 50% 50% no-repeat radial-gradient(circle at center, black 2px, transparent 3px); }
