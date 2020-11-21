@@ -2,6 +2,6 @@
   <circle cx="7" cy="4" r="4"/>
   <circle cx="16" cy="4" r="4"/>
   <circle cx="25" cy="4" r="4"/>
-  <rect x="9.5" y="9" width="13" height="17" rx="2"/>
+  <rect x="9.5" y="9" width="13" height="14" rx="2"/>
   <rect x="3" y="24" width="26" height="8" rx="4"/>
 </svg>
