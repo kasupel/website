@@ -15,7 +15,7 @@ function loadTimestamp(timestamp) {
 /** An enum - maps names to unique values. */
 class Enum {
   /** Create a new enum class.
-   * 
+   *
    * @param {Array<String>} names - The names of the options.
    */
   constructor(names) {
@@ -27,7 +27,7 @@ class Enum {
   }
 
   /** Get an option of this enum by value.
-   * 
+   *
    * @param {Number} value - The value to look for.
    * @returns {Symbol} - An option of this enum.
    */
@@ -40,7 +40,7 @@ class Enum {
   }
 
   /** Get the value for some option.
-   * 
+   *
    * @param {Symbol} option - The option to look for.
    * @returns {Number} - The value the API uses for the given option.
    */
@@ -77,7 +77,7 @@ const Conclusion = new Enum([
   'AGREED_DRAW',
 ]);
 
-const Piece = new Enum([
+const PieceType = new Enum([
   'PAWN',
   'ROOK',
   'KNIGHT',
@@ -123,7 +123,7 @@ class User {
 /** Meta-information about a game. */
 class Game {
   /** Create an instance from data returned by the API.
-   * 
+   *
    * @param {Object} data - The data as returned by the API.
    */
   constructor(data) {
@@ -137,7 +137,7 @@ class Game {
     this.timeControl = new TimeControl(
       data.main_thinking_time, data.fixed_extra_time,
       data.time_increment_per_turn
-    )
+    );
     this.hostTime = data.host_time;
     this.awayTime = data.away_time;
     this.hostOfferingDraw = data.host_offering_draw;
@@ -153,7 +153,7 @@ class Game {
 /** A notification for the user. */
 class Notification {
   /** Create an instance based on data from the API.
-   * 
+   *
    * @param {Object} data - Data from the API.
    */
   constructor(data) {
@@ -170,7 +170,7 @@ class Notification {
 /** Settings for a game's time control. */
 class TimeControl {
   /** Create a new instance of the settings.
-   * 
+   *
    * @param {Number} mainThinkingTime - The time clocks start with.
    * @param {Number} fixedExtraTime - Time before the clock starts going down
    *                                  each turn.
@@ -184,7 +184,7 @@ class TimeControl {
   }
 
   /** Get these settings in an easy way to pass to the API.
-   * 
+   *
    * @returns {Object} - Time control settings as an object with snake_case
    *                     keys.
    */
@@ -194,6 +194,151 @@ class TimeControl {
       fixed_extra_time: this.fixedExtraTime,
       time_increment_per_turn: this.timeIncrementPerTurn,
     };
+  }
+}
+
+/** A piece on a board. */
+class Piece {
+  /** Create a piece from a piece type and a side.
+   *
+   * @param {PieceType} pieceType - The type of the piece.
+   * @param {Side} side - Which side the piece is on.
+   */
+  constructor(pieceType, side) {
+    this.pieceType = pieceType;
+    this.side = side;
+  }
+}
+
+/** The visual state of a game board. */
+class Board {
+  /** Load the board from data returned by the API.
+   *
+   * @param {Object} data - The data as returned by the API.
+   */
+  constructor(data) {
+    this.ranks = [];
+    for (let rank = 0; rank < 8; rank++) {
+      let rank = [];
+      for (let file = 0; file < 8; file++) {
+        const positionKey = `${rank},${file}`;
+        if (positionKey in data) {
+          const pieceType = PieceType.getByValue(data[positionKey][0]);
+          const side = Side.getByValue(data[positionKey][1]);
+          rank.push(new Piece(pieceType, side));
+        } else {
+          rank.push(null);
+        }
+      }
+      this.ranks.push(rank);
+    }
+  }
+
+  /** Get the piece on a square, if any.
+   *
+   * @param {Number} rank - The rank of the square (0-7).
+   * @param {Number} file - The file of the square (0-7).
+   * @returns {?Piece} - The piece on the square, or null if there is none.
+   */
+  getSquare(rank, file) {
+    return this.ranks[rank][file];
+  }
+}
+
+/** The current state of the clocks in a game. */
+class Clocks {
+  /** Load the clocks from data returned by the API.
+   *
+   * @param {Object} data - The returned by the API.
+   * @param {Game} game - The game this relates to.
+   */
+  constructor(data, game) {
+    this.baseHostTime = data.host_time;
+    this.baseAwayTime = data.away_time;
+    this.lastTurnTime = data.last_turn;
+    this.current_turn = Side.getByValue(data.current_turn);
+    this.timeControl = game.timeControl;
+  }
+}
+
+/** The state of a game, including the board and timers. */
+class GameState {
+  /** Load the game state from data returned by the API.
+   *
+   * @param {Object} data - The data returned by the API.
+   * @param {Game} game - The game this relates to.
+   */
+  constructor(data, game) {
+    this.board = new Board(data.board);
+    this.clocks = new Clocks(data, game);
+    this.currentTurn = Side.getByValue(data.current_turn);
+    this.turnNumber = data.turn_number;
+    this.game = game;
+  }
+}
+
+/** A move on a board. */
+class Move {
+  /** Load a move from data returned by the API.
+   *
+   * @param {Object} - Data from the API.
+   * @returns {Move} - A `Move` object representing the same data.
+   */
+  static fromApiData(data) {
+    return new Move({
+      startRank: data.start_rank,
+      startFile: data.start_file,
+      endRank: data.end_rank,
+      endFile: data.end_file,
+      promotion: PieceType.getByValue(data.promotion),
+    });
+  }
+
+  /** Create a new move.
+   *
+   * @param {Number} data.startRank - The current rank of the piece to move.
+   * @param {Number} data.startFile - The current file of the piece to move.
+   * @param {Number} data.endRank - The rank to move the piece to.
+   * @param {Number} data.endFile - The file to move the piece to.
+   * @param {PieceType} [data.promotion=null] - What piece to promote to, if
+   *     the move moves a pawn to the final rank.
+   */
+  constructor(
+      {startRank, startFile, endRank, endFile, promotion = null} = {}) {
+    this.startRank = startRank;
+    this.startFile = startFile;
+    this.endRank = endRank;
+    this.endFile = endFile;
+    this.promotion = promotion;
+  }
+
+  /** Get this move in an easy way to pass to the API.
+   *
+   * @returns {Object} - This move as an object with snake_case keys.
+   */
+  apiFormat() {
+    return {
+      start_rank: this.startRank,
+      start_file: this.startFile,
+      end_rank: this.endRank,
+      end_file: this.endFile,
+      promotion: this.promotion ? PieceType.valueFor(this.promotion) : null,
+    };
+  }
+}
+
+/** A list of possible moves and a draw claim. */
+class AllowedMoves {
+  /** Load the allowed moves from raw API data.
+   *
+   * @param {Object} data - The data as returned by the API.
+   */
+  constructor(data) {
+    this.moves = [];
+    for (let move in data.moves) {
+      this.moves.push(Move.fromApiData(move));
+    }
+    this.drawClaim = Conclusion.getByValue(data.draw_claim);
   }
 }
 
@@ -241,9 +386,9 @@ class Paginator {
     ).then(response => {
       this.pages = response.pages;
       let page = [];
-      for (itemIndex in response[this.paginatedField]) {
+      for (let itemIndex in response[this.paginatedField]) {
         let item = response[this.paginatedField][itemIndex];
-        for (field in this.referenceFields) {
+        for (let field in this.referenceFields) {
           if (field in item) {
             item[field] = response[this.referenceFields[field]][item[field]];
           }
@@ -255,16 +400,36 @@ class Paginator {
   }
 }
 
+class KasupelError extends Error {
+  /** Load a new error from the API.
+   *
+   * @param {Object} data - The data returned by the API.
+   * @param {Object} params - Any other parameters passed by JS. Should not be
+   *                          used.
+  */
+  constructor(data, ...params) {
+    super(...params);
+    this.code = data.error;
+    this.message = data.message;
+  }
+}
+
 export {
   GameMode,
   Winner,
   Conclusion,
-  Piece,
+  PieceType,
   Side,
   DisconnectReason,
   User,
   Game,
   Notification,
   TimeControl,
+  Piece,
+  Board,
+  GameState,
+  Move,
+  AllowedMoves,
   Paginator,
+  KasupelError,
 };

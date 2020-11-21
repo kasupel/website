@@ -28,14 +28,14 @@ async function blobToBase64(blob) {
       resolve(reader.result.split(',')[1]);
     }, false);
     reader.readAsDataURL(blob);
-  })
+  });
 }
 
 /** Log in to the user's account. Stores a session with cookies.
  *
  * @param {String} username - The user's username.
  * @param {String} password - The user's password.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function login(username, password) {
   const token = generateRandomToken();
@@ -47,12 +47,12 @@ async function login(username, password) {
     setCookie('sessionToken', token, 30);
     setCookie('sessionId', response.session_id, 30);
     onSuccess();
-  })
+  });
 }
 
 /** Delete the current session.
  *
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function logout() {
   const response = await call(
@@ -68,19 +68,19 @@ async function logout() {
  * @param {String} username - The username for the new account.
  * @param {String} password - The password for the new account.
  * @param {String} email - The email address for the new account.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function createAccount() {
   return call(
     'POST', '/accounts/create',
     {username: username, password: password, email: email},
     {encrypt: true}
-  )
+  );
 }
 
 /** Resend a verification email to the user.
  *
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function resendVerificationEmail() {
   return call(
@@ -91,12 +91,12 @@ async function resendVerificationEmail() {
 /** Verify the user's email address.
  *
  * @param {String} token - The six character token emailed to the user.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function verifyEmail(token) {
   return call(
     'GET', '/accounts/verify_email', {token: token}, {authenticate: true}
-  )
+  );
 }
 
 /** Update the user's password, avatar or email address.
@@ -104,7 +104,7 @@ async function verifyEmail(token) {
  * @param {String} [fields.password=null] - A new password.
  * @param {Blob} [fields.avatar=null] - A new avatar.
  * @param {String} [fields.email=null] - A new email address.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function updateAccount(
     {password = null, avatar = null, email = null} = {}) {
@@ -120,12 +120,12 @@ async function updateAccount(
   }
   return call(
     'PATCH', '/accounts/me', payload, {encrypt: true, authenticate: true}
-  )
+  );
 }
 
 /** Delete the user's account
  *
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function deleteAccount() {
   return call('DELETE', '/accounts/me', {}, {authenticate: true});
@@ -134,7 +134,7 @@ async function deleteAccount() {
 /** Get the user's account.
  *
  * @returns {User} - The logged in user.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function getAuthenticatedAccount() {
   return call('GET', '/accounts/me', {}, {authenticate: true}).then(
@@ -146,7 +146,7 @@ async function getAuthenticatedAccount() {
  *
  * @param {Number} id - The ID of the account to get.
  * @returns {User} - The account.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function getAccountById(id) {
   return call('GET', '/accounts/account', {id: id}).then(
@@ -158,7 +158,7 @@ async function getAccountById(id) {
  *
  * @param {String} username - The username of the account to get.
  * @returns {User} - The account.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function getAccount(username) {
   const endpoint = `/users/${encodeURIComponent(username)}`;
@@ -176,7 +176,7 @@ function getAccounts() {
 }
 
 /** Get a paginator of the user's notifications.
- * 
+ *
  * @returns {Paginator} - A paginator of `Notification` objects.
  */
 function getNotifications() {
@@ -187,9 +187,9 @@ function getNotifications() {
 }
 
 /** Check how many unread notifications the user has.
- * 
+ *
  * @returns {Number} - The number of unread notifications.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function getUnreadNotificationCount() {
   return call(
@@ -198,9 +198,9 @@ async function getUnreadNotificationCount() {
 }
 
 /** Mark a notification as read.
- * 
+ *
  * @param {Number} id - The ID of the notification to mark as read.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function acknowledgeNotification(id) {
   return call(

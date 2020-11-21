@@ -1,17 +1,45 @@
 /** @file Low level tools for interacting with the API. */
 // Requires forge - https://unpkg.com/node-forge@0.7.0/dist/forge.min.js
+// Requires socket.io - https://unpkg.com/socket.io-client@3.0.1/dist/socket.io.min.js
 
 import {getCookie} from '../utils/cookies.js';
+import {KasupelError} from './types.js';
 
 
 const API_URL = 'https://chess-api.polytopia.win';
+
+let _cached_session = null;
+
+/** Storage for the session ID and token. */
+class Session {
+  /** Get a new session from credentials stored in cookies.
+   *
+   * @throws {Error} - The user is not logged in.
+   */
+  constructor() {
+    this.sessionId = parseInt(getCookie('sessionId'));
+    if (isNan(this.sessionId)) {
+      throw Error('Not logged in.');
+    }
+    this.session_token = getCookie('sessionToken');
+    _cached_session = this;
+  }
+
+  /** Get a session stored in cookies, or cached.
+   *
+   * @returns {Session} - The session.
+   */
+  static getSession() {
+    return _cached_session ? _cached_session : new Session();
+  }
+}
 
 
 /** Process the raw response sent by the server.
  *
  * @param {Response} response - The response to process.
  * @returns {Object} - The parsed response.
- * @throws {Object} - An error returned by the server.
+ * @throws {KasupelError} - An error returned by the server.
  */
 async function handleResponse(response) {
   if (response.status === 200) {
@@ -19,8 +47,7 @@ async function handleResponse(response) {
   } else if (response.status === 204) {
     return {};
   } else {
-    // FIXME: Don't just throw objects, have an error class.
-    throw await response.json();
+    throw await KasupelError(response.json());
   }
 }
 
@@ -41,7 +68,7 @@ async function getPublicKey() {
  * @param {Boolean} [encrypt] - Whether to encrypt the data.
  * @param {String} [method] - The HTTP verb - should be POST or PATCH.
  * @returns {Object} - The response from the server.
- * @throws {Object} - An error from the server.
+ * @throws {KasupelError} - An error from the server.
  */
 async function postPayload(
     endpoint, payload, encrypt, method) {
@@ -58,7 +85,7 @@ async function postPayload(
   return fetch(API_URL + endpoint, {
     method: method,
     body: payloadString
-  }).then(response => {return handleResponse(response)});
+  }).then(response => {return handleResponse(response);});
 }
 
 /** Send a request to the server without a body.
@@ -67,13 +94,13 @@ async function postPayload(
  * @param {Object} [query] - The query to send.
  * @param {String} [method] - The HTTP verb - should be GET or DELETE.
  * @returns {Object} - The response from the server.
- * @throws {Object} - An error from the server.
+ * @throws {KasupelError} - An error from the server.
  */
 async function getEndpoint(endpoint, query, method) {
   const url = new URL(API_URL + endpoint);
   Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));
   return fetch(url, {method: method}).then(
-    response => {return handleResponse(response)}
+    response => {return handleResponse(response);}
   );
 }
 
@@ -90,18 +117,15 @@ async function getEndpoint(endpoint, query, method) {
  * @param {Boolean} [options.authenticate=false] - Whether or not to
  *                                                 authenticate.
  * @returns {Object} - The response from the server.
- * @throws {Object} - An error from the server.
+ * @throws {KasupelError} - An error from the server.
  */
 async function call(
     method, endpoint, params = {},
     {encrypt = false, authenticate = false} = {}) {
   if (authenticate) {
-    const sessionId = parseInt(getCookie('sessionId'));
-    if (sessionId === NaN) {
-      throw 'Not logged in.';
-    }
-    params.session_id = sessionId;
-    params.session_token = getCookie('sessionToken');
+    const session = Session.getSession();
+    params.sessionId = session.sessionId;
+    params.sessionToken = session.sessionToken;
   }
   if (method === 'POST' || method === 'PATCH') {
     return postPayload(endpoint, params, encrypt, method);
@@ -111,4 +135,4 @@ async function call(
 }
 
 
-export {call};
+export {call, Session, API_URL};
