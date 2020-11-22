@@ -5,11 +5,15 @@
  * @param {String} name - The name of the cookie.
  * @param {*} value - The value for the cookie.
  * @param {Number} expiresAfter - How many days to set it's expiration for.
+ * @param {String} [sameSite='Lax'] - The same site policy.
  */
-function setCookie(name, value, expiresAfter) {
+function setCookie(name, value, expiresAfter, sameSite = 'Lax') {
   const expires = new Date();
   expires.setTime(expires.getTime() + (expiresAfter * 24 * 60 * 60 * 1000));
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+  document.cookie = (
+    `${name}=${value};expires=${expires.toUTCString()};path=/;` +
+    `sameSite=${sameSite}`
+  );
 }
 
 /** Read a cookie.
@@ -18,14 +22,14 @@ function setCookie(name, value, expiresAfter) {
  * @return {String} - The value of the cookie, or the empty string.
  */
 function getCookie(name) {
-  const cookieMatch = new RegExp(`^ +${name}=`);
+  const cookieMatch = new RegExp(`^ *${name}=`);
   const cookieString = decodeURIComponent(document.cookie);
   const allCookies = cookieString.split(';');
   const cookie = allCookies.find(function(value, index, arr) {
-    return cookie.test(cookieMatch);
-  })
+    return cookieMatch.test(value);
+  });
   if (cookie) {
-    const re = new RegExp(`^ +${name}=(.*)`);
+    const re = new RegExp(`^ *${name}=(.*)`);
     return re.exec(cookie)[1];
   } else {
     return '';

@@ -46,7 +46,6 @@ async function login(username, password) {
   }, {encrypt: true}).then(response => {
     setCookie('sessionToken', token, 30);
     setCookie('sessionId', response.session_id, 30);
-    onSuccess();
   });
 }
 
@@ -70,7 +69,7 @@ async function logout() {
  * @param {String} email - The email address for the new account.
  * @throws {KasupelError} - An error returned by the server.
  */
-async function createAccount() {
+async function createAccount(username, password, email) {
   return call(
     'POST', '/accounts/create',
     {username: username, password: password, email: email},
@@ -213,6 +212,7 @@ export {
   login,
   logout,
   createAccount,
+  verifyEmail,
   resendVerificationEmail,
   updateAccount,
   deleteAccount,

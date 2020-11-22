@@ -5,6 +5,13 @@ import * as games from './games.js';
 import * as types from './types.js';
 import {KasupelSocket} from './socket.js';
 
+window.api = {
+  accounts: accounts,
+  games: games,
+  types: types,
+  KasupelSocket: KasupelSocket,
+};
+
 export {
   accounts,
   games,

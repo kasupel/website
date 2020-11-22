@@ -18,10 +18,10 @@ class Session {
    */
   constructor() {
     this.sessionId = parseInt(getCookie('sessionId'));
-    if (isNan(this.sessionId)) {
+    if (isNaN(this.sessionId)) {
       throw Error('Not logged in.');
     }
-    this.session_token = getCookie('sessionToken');
+    this.sessionToken = getCookie('sessionToken');
     _cached_session = this;
   }
 
@@ -47,7 +47,7 @@ async function handleResponse(response) {
   } else if (response.status === 204) {
     return {};
   } else {
-    throw await KasupelError(response.json());
+    throw new KasupelError(await response.json());
   }
 }
 
@@ -124,8 +124,8 @@ async function call(
     {encrypt = false, authenticate = false} = {}) {
   if (authenticate) {
     const session = Session.getSession();
-    params.sessionId = session.sessionId;
-    params.sessionToken = session.sessionToken;
+    params.session_id = session.sessionId;
+    params.session_token = session.sessionToken;
   }
   if (method === 'POST' || method === 'PATCH') {
     return postPayload(endpoint, params, encrypt, method);
