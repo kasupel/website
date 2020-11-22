@@ -2,7 +2,7 @@
 // Requires forge - https://unpkg.com/node-forge@0.7.0/dist/forge.min.js
 // Requires socket.io - https://unpkg.com/socket.io-client@3.0.1/dist/socket.io.min.js
 
-import {getCookie} from '../utils/cookies.js';
+import {setCookie, getCookie, deleteCookie} from '../utils/cookies.js';
 import {KasupelError} from './types.js';
 
 
@@ -31,6 +31,24 @@ class Session {
    */
   static getSession() {
     return _cached_session ? _cached_session : new Session();
+  }
+
+  /** Store a new session.
+   * 
+   * @param {Number} id - The session ID.
+   * @param {String} token - The session token.
+   */
+  static storeSession(id, token) {
+    this.forgetSession();
+    setCookie('sessionToken', token, 30);
+    setCookie('sessionId', id, 30);
+  }
+
+  /** Delete any session there is. */
+  static forgetSession() {
+    _cached_session = null;
+    deleteCookie('sessionId');
+    deleteCookie('sessionToken');
   }
 }
 
@@ -63,7 +81,7 @@ async function getPublicKey() {
 
 /** Send a request with a body to the server.
  *
- * @param {String} endpoint - The endpoint to call.
+ * @param {URL} url - The endpoint to call.
  * @param {Object} payload - The data to send.
  * @param {Boolean} [encrypt] - Whether to encrypt the data.
  * @param {String} [method] - The HTTP verb - should be POST or PATCH.
@@ -71,7 +89,7 @@ async function getPublicKey() {
  * @throws {KasupelError} - An error from the server.
  */
 async function postPayload(
-    endpoint, payload, encrypt, method) {
+    url, payload, encrypt, method) {
   let payloadString = JSON.stringify(payload);
   if (encrypt) {
     const publicKey = await getPublicKey();
@@ -82,7 +100,7 @@ async function postPayload(
       }
     }));
   }
-  return fetch(API_URL + endpoint, {
+  return fetch(url, {
     method: method,
     body: payloadString
   }).then(response => {return handleResponse(response);});
@@ -90,14 +108,13 @@ async function postPayload(
 
 /** Send a request to the server without a body.
  *
- * @param {String} endpoint - The endpoint to call.
+ * @param {URL} url - The endpoint to call.
  * @param {Object} [query] - The query to send.
  * @param {String} [method] - The HTTP verb - should be GET or DELETE.
  * @returns {Object} - The response from the server.
  * @throws {KasupelError} - An error from the server.
  */
-async function getEndpoint(endpoint, query, method) {
-  const url = new URL(API_URL + endpoint);
+async function getEndpoint(url, query, method) {
   Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));
   return fetch(url, {method: method}).then(
     response => {return handleResponse(response);}
@@ -122,15 +139,16 @@ async function getEndpoint(endpoint, query, method) {
 async function call(
     method, endpoint, params = {},
     {encrypt = false, authenticate = false} = {}) {
+  const url = new URL(API_URL + endpoint);
   if (authenticate) {
     const session = Session.getSession();
     params.session_id = session.sessionId;
     params.session_token = session.sessionToken;
   }
   if (method === 'POST' || method === 'PATCH') {
-    return postPayload(endpoint, params, encrypt, method);
+    return postPayload(url, params, encrypt, method);
   } else if (method === 'GET' || method === 'DELETE') {
-    return getEndpoint(endpoint, params, method);
+    return getEndpoint(url, params, method);
   }
 }
 

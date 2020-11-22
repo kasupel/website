@@ -1,6 +1,6 @@
 /** @file Classes for data returned by the API. */
 
-import {call} from './utils.js';
+import {call, API_URL} from './utils.js';
 
 /** Convert a timestamp returned by the API to a Date object.
  *
@@ -110,7 +110,7 @@ class User {
     this.username = data.username;
     this.elo = data.elo;
     this.createdAt = loadTimestamp(data.created_at);
-    this.avatarUrl = data.avatarUrl;
+    this.avatarUrl = data.avatar_url ? API_URL + data.avatar_url : null;
     if (data.hasOwnProperty('email')) {
       this.hasEmail = true;
       this.email = data.email;
@@ -160,7 +160,7 @@ class Notification {
     this.id = data.id;
     this.sentAt = loadTimestamp(data.sent_at);
     this.typeCode = data.type_code;
-    this.game = data.game ? Game(data.game) : null;
+    this.game = data.game ? new Game(data.game) : null;
     // TODO: Provide our own (localised?) message based on typeCode and game.
     this.message = data.message;
     this.read = data.read;
@@ -360,7 +360,7 @@ class Paginator {
    */
   constructor(
       endpoint, paginatedField, type,
-      {referenceFields = {}, parameters = {}, authenticate = false}) {
+      {referenceFields = {}, parameters = {}, authenticate = false} = {}) {
     this.endpoint = endpoint;
     this.paginatedField = paginatedField;
     this.type = type;

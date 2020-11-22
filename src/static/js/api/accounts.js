@@ -1,8 +1,7 @@
 /* Endpoints relating to user accounts. */
 
-import {call} from './utils.js';
+import {call, Session} from './utils.js';
 import {User, Notification, Paginator} from './types.js';
-import {setCookie, deleteCookie} from '../utils/cookies.js';
 
 
 /** Generate a 32 byte base64-encoded token.
@@ -23,7 +22,7 @@ function generateRandomToken() {
  */
 async function blobToBase64(blob) {
   const reader = new FileReader();
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     reader.addEventListener('load', function () {
       resolve(reader.result.split(',')[1]);
     }, false);
@@ -44,8 +43,7 @@ async function login(username, password) {
     password: password,
     token: token
   }, {encrypt: true}).then(response => {
-    setCookie('sessionToken', token, 30);
-    setCookie('sessionId', response.session_id, 30);
+    Session.storeSession(response.session_id, token);
   });
 }
 
@@ -54,12 +52,9 @@ async function login(username, password) {
  * @throws {KasupelError} - An error returned by the server.
  */
 async function logout() {
-  const response = await call(
-    'GET', '/accounts/logout', {}, {authenticate: true}
+  return call('GET', '/accounts/logout', {}, {authenticate: true}).then(
+    _response => Session.forgetSession()
   );
-  deleteCookie('sessionId');
-  deleteCookie('sessionToken');
-  return response;
 }
 
 /** Create a new user account.
@@ -98,27 +93,35 @@ async function verifyEmail(token) {
   );
 }
 
-/** Update the user's password, avatar or email address.
+/** Update the user's password or email address.
  *
  * @param {String} [fields.password=null] - A new password.
- * @param {Blob} [fields.avatar=null] - A new avatar.
  * @param {String} [fields.email=null] - A new email address.
  * @throws {KasupelError} - An error returned by the server.
  */
-async function updateAccount(
-    {password = null, avatar = null, email = null} = {}) {
+async function updateAccount({password = null, email = null} = {}) {
   let payload = {};
   if (password) {
     payload.password = password;
-  }
-  if (avatar) {
-    payload.avatar = blobToBase64(avatar);
   }
   if (email) {
     payload.email = email;
   }
   return call(
     'PATCH', '/accounts/me', payload, {encrypt: true, authenticate: true}
+  ).then(_response => {
+    if (password) Session.forgetSession();
+  });
+}
+
+/** Update the user's avatar.
+ * 
+ * @param {Blob} avatar - A new avatar.
+ */
+async function updateAvatar(avatar) {
+  return call(
+    'PATCH', '/accounts/me/avatar', {avatar: await blobToBase64(avatar)},
+    {authenticate: true}
   );
 }
 
@@ -127,7 +130,9 @@ async function updateAccount(
  * @throws {KasupelError} - An error returned by the server.
  */
 async function deleteAccount() {
-  return call('DELETE', '/accounts/me', {}, {authenticate: true});
+  return call('DELETE', '/accounts/me', {}, {authenticate: true}).then(
+    _response => Session.forgetSession()
+  );
 }
 
 /** Get the user's account.
@@ -137,7 +142,7 @@ async function deleteAccount() {
  */
 async function getAuthenticatedAccount() {
   return call('GET', '/accounts/me', {}, {authenticate: true}).then(
-    response => User(response)
+    response => new User(response)
   );
 }
 
@@ -149,7 +154,7 @@ async function getAuthenticatedAccount() {
  */
 async function getAccountById(id) {
   return call('GET', '/accounts/account', {id: id}).then(
-    response => User(response)
+    response => new User(response)
   );
 }
 
@@ -161,9 +166,7 @@ async function getAccountById(id) {
  */
 async function getAccount(username) {
   const endpoint = `/users/${encodeURIComponent(username)}`;
-  return call('GET', endpoint, {id: id}).then(
-    response => User(response)
-  );
+  return call('GET', endpoint).then(response => new User(response));
 }
 
 /** Get a paginator of all accounts ordered by ELO.
@@ -171,7 +174,7 @@ async function getAccount(username) {
  * @returns {Paginator} - A paginator of `User` objects.
  */
 function getAccounts() {
-  return Paginator('/accounts/accounts', 'users', User);
+  return new Paginator('/accounts/all', 'users', User);
 }
 
 /** Get a paginator of the user's notifications.
@@ -179,7 +182,7 @@ function getAccounts() {
  * @returns {Paginator} - A paginator of `Notification` objects.
  */
 function getNotifications() {
-  return Paginator(
+  return new Paginator(
     '/accounts/notifications', 'notifications', Notification,
     {authenticate: true}
   );
@@ -215,6 +218,7 @@ export {
   verifyEmail,
   resendVerificationEmail,
   updateAccount,
+  updateAvatar,
   deleteAccount,
   getAuthenticatedAccount,
   getAccountById,

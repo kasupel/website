@@ -11,7 +11,7 @@ import {GameMode, Game, Paginator} from './types.js';
  * @returns {Paginator} - A paginator of `Game` objects.
  */
 function gamePaginator(endpoint, {parameters = {}, authenticate = false} = {}) {
-  return Paginator(endpoint, 'games', Game, {referenceFields: {
+  return new Paginator(endpoint, 'games', Game, {referenceFields: {
     host: 'users', away: 'users', invited: 'users'
   }, parameters: parameters, authenticate: authenticate});
 }
@@ -67,7 +67,7 @@ function getCommonCompletedGames(username) {
  * @throws {KasupelError} - An error returned by the server.
  */
 async function getGame(id) {
-  return call('GET', `/games/${id}`).then(response => Game(response));
+  return call('GET', `/games/${id}`).then(response => new Game(response));
 }
 
 /** Create or join an un-started game.
