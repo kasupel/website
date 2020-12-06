@@ -1,0 +1,19 @@
+{% extends "base.njk" %}
+{% block head %}
+  <script src='/static/js/forms/login.js' type='module'></script>
+  <link rel='stylesheet' href='/static/css/forms.css'/>
+  <title>Login - Kasupel</title>
+{% endblock %}
+{% block body %}
+  <form onsubmit="login(event)">
+    <label for="username-input">
+      Username:
+      <input id="username-input" type="text" name="username" placeholder="Enter your username"/>
+    </label>
+    <label for="password-input">
+      Password:
+      <input id="password-input" type="password" name="password" placeholder="Enter your password"/>
+    </label>
+    <input type="submit" value="Login"/>
+  </form>
+{% endblock %}

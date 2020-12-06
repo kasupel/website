@@ -1,7 +1,4 @@
 /** @file Low level tools for interacting with the API. */
-// Requires forge - https://unpkg.com/node-forge@0.7.0/dist/forge.min.js
-// Requires socket.io - https://unpkg.com/socket.io-client@3.0.1/dist/socket.io.min.js
-
 import {setCookie, getCookie, deleteCookie} from '../utils/cookies.js';
 import {KasupelError} from './types.js';
 
@@ -9,6 +6,12 @@ import {KasupelError} from './types.js';
 const API_URL = 'https://chess-api.polytopia.win';
 
 let _cached_session = null;
+
+class NotLoggedInError extends Error {
+  constructor(...params) {
+    super('Not logged in.', ...params);
+  }
+}
 
 /** Storage for the session ID and token. */
 class Session {
@@ -19,7 +22,7 @@ class Session {
   constructor() {
     this.sessionId = parseInt(getCookie('sessionId'));
     if (isNaN(this.sessionId)) {
-      throw Error('Not logged in.');
+      throw new NotLoggedInError();
     }
     this.sessionToken = getCookie('sessionToken');
     _cached_session = this;
@@ -153,4 +156,4 @@ async function call(
 }
 
 
-export {call, Session, API_URL};
+export {call, Session, NotLoggedInError, API_URL};

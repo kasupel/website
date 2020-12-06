@@ -1,5 +1,4 @@
 /** Provide wrappers for the Socket.IO events. */
-
 import {
   GameState, AllowedMoves, Move, Conclusion, DisconnectReason, Notification,
   KasupelError

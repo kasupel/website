@@ -412,6 +412,21 @@ class KasupelError extends Error {
     this.code = data.error;
     this.message = data.message;
   }
+
+  /** Check if the error is in some domain.
+   * Eg. "2134" and "2198" are in the domain "2100" but not "2130".
+   *
+   * @param {Number} domain - The domain to check.
+   * @returns {Boolean} - Whether the error is in the domain.
+   */
+  isInDomain(domain) {
+    let regex = '^';
+    for (char of domain.toString()) {
+      if (char === '0') break;
+      regex += char;
+    }
+    return new RegExp(regex).test(this.code.toString());
+  }
 }
 
 export {

@@ -7,6 +7,7 @@ var expressNunjucks = require('express-nunjucks');
 var sassMiddleware = require('node-sass-middleware');
 
 var indexRouter = require('./routes/index');
+var accountsRouter = require('./routes/accounts.js');
 
 var app = express();
 var developmentMode = app.get('env') === 'development';
@@ -34,6 +35,7 @@ app.use(sassMiddleware({
 // Router setup
 app.use('/static/', express.static(path.join(__dirname, 'static')));
 app.use('/', indexRouter);
+app.use('/accounts', accountsRouter);
 
 // Any path not matched so far is a 404 error.
 app.use(function(req, res, next) {

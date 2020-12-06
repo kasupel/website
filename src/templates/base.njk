@@ -2,14 +2,19 @@
 
 <html>
   <head>
+    <script src="https://unpkg.com/node-forge@0.7.0/dist/forge.min.js"></script>
+    <script src="https://unpkg.com/socket.io-client@3.0.1/dist/socket.io.min.js"></script>
+    <script src='/static/js/index.js' type='module'></script>
     <link rel='stylesheet' href='/static/css/style.css'/>
     {% block head %}{% endblock %}
   </head>
   <body>
     <nav>
       <a href="/" class="button">Home</a>
-      <a href="#" class="button">Play</a>
-      <a href="#" class="button">Logout</a>
+      <a href="/accounts/login" class="button logged-out">Login</a>
+      <a href="#" class="button logged-in">Play</a>
+      <button onclick="logout()" class="button logged-in">Logout</button>
+      <a href="/accounts/me" class="button logged-in account-name">Loading...</a>
     </nav>
     <main>
       {% block body %}{% endblock %}

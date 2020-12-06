@@ -5,12 +5,15 @@ body
   margin: 0
   color: $text-colour
 
+main
+  padding: 1rem
+
 nav
   display: flex
   width: 100%
   box-shadow: 0 2px 2px 1px black
 
-  a
+  a, button
     padding: 1.5rem
 
 .button
@@ -18,6 +21,11 @@ nav
   color: $secondary-text-colour
   transition: background 0.5s
   transition: color 0.5s
+  border: 0
+  font-family: inherit
+  font-size: inherit
+  background: transparent
+  cursor: pointer
 
   &:hover
     background: $button-bg
