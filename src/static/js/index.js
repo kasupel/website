@@ -1,17 +1,19 @@
-import * as api from './api/index.js';
+import {getAuthenticatedAccount, logout as apiLogout} from './api/accounts.js';
+import {NotLoggedInError} from './api/utils.js';
 
 /** Logout and go to the home page. */
 function logout() {
-  api.accounts.logout().then(() => {
+  apiLogout().then(() => {
     window.location.href = '/';
   });
 }
 
-const getAccountPromise = api.accounts.getAuthenticatedAccount().then(
+window.getAccountPromise = getAuthenticatedAccount().then(
   account => {
     window.userAccount = account;
+    return account;
 }).catch(error => {
-  if (error instanceof api.NotLoggedInError) {
+  if (error instanceof NotLoggedInError) {
     window.userAccount = null;
   } else {
     throw error;
@@ -20,12 +22,16 @@ const getAccountPromise = api.accounts.getAuthenticatedAccount().then(
 
 window.addEventListener('load', function() {
   getAccountPromise.then(() => {
-    const removeClass = userAccount ? '.logged-out' : '.logged-in';
+    const removeClass = userAccount ? '.--logged-out' : '.--logged-in';
     document.querySelectorAll(removeClass).forEach(elem => elem.remove());
     if (userAccount) {
-      document.querySelectorAll('.account-name').forEach(elem => {
+      document.querySelectorAll('.--account-name').forEach(elem => {
         elem.innerText = userAccount.username;
       });
+      document.querySelectorAll('.--account-link').forEach(elem => {
+        elem.href = `/accounts/users/${encodeURIComponent(userAccount.username)}`;
+      });
+      document.title = `User ${userAccount.username} - Kasupel`;
     }
   });
 });

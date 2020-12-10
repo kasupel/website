@@ -1,0 +1,21 @@
+{% extends "base.njk" %}
+{% block head %}
+  <script src='/static/js/pages/account.js' type='module'></script>
+  <link rel='stylesheet' href='/static/css/account.css'/>
+  <title>Loading... - Kasupel</title>
+{% endblock %}
+{% block body %}
+  <div class="account-summary">
+    <img src="/static/images/placeholder-account.svg"
+      alt="User avatar." class="account-summary__avatar" id="account-avatar">
+    <div class="account-summary__details">
+      <h1 id="account-name">Loading...</h1>
+      <h2><span id="account-elo"></span> ELO</h2>
+    </div>
+  </div>
+  <div class="game-log-viewer">
+    <div class="game-log-viewer__switcher">
+    </div>
+    <table class="game-log-viewer__logs" id="game-log-viewer__logs"></table>
+  </div>
+{% endblock %}

@@ -11,10 +11,10 @@
   <body>
     <nav>
       <a href="/" class="button">Home</a>
-      <a href="/accounts/login" class="button logged-out">Login</a>
-      <a href="#" class="button logged-in">Play</a>
-      <button onclick="logout()" class="button logged-in">Logout</button>
-      <a href="/accounts/me" class="button logged-in account-name">Loading...</a>
+      <a href="/accounts/login" class="button --logged-out">Login</a>
+      <a href="#" class="button --logged-in">Play</a>
+      <button onclick="logout()" class="button --logged-in">Logout</button>
+      <a href="/accounts/me" class="button --logged-in --account-link --account-name">Loading...</a>
     </nav>
     <main>
       {% block body %}{% endblock %}

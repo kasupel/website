@@ -1,6 +1,7 @@
 /** @file Classes for data returned by the API. */
 
 import {call, API_URL} from './utils.js';
+import {prettyTimedelta} from '../utils/prettify.js';
 
 /** Convert a timestamp returned by the API to a Date object.
  *
@@ -22,7 +23,7 @@ class Enum {
     this.values = {};
     for (let i in names) {
       this[names[i]] = Symbol(names[i]);
-      this.values[names[i]] = i + 1;
+      this.values[names[i]] = parseInt(i) + 1;
     }
   }
 
@@ -181,6 +182,13 @@ class TimeControl {
     this.mainThinkingTime = mainThinkingTime;
     this.fixedExtraTime = fixedExtraTime;
     this.timeIncrementPerTurn = timeIncrementPerTurn;
+    this.shortNotation = prettyTimedelta(mainThinkingTime);
+    if (timeIncrementPerTurn) {
+      this.shortNotation += `|${prettyTimedelta(timeIncrementPerTurn)}`;
+    }
+    if (fixedExtraTime) {
+      this.shortNotation += ` delay ${prettyTimedelta(fixedExtraTime)}`;
+    }
   }
 
   /** Get these settings in an easy way to pass to the API.
@@ -369,6 +377,7 @@ class Paginator {
     this.authenticate = authenticate;
     this.page = 0;
     this.pages = null;
+    this.endReached = false;
   }
 
   /** Get a page, defaults to the next.
@@ -377,8 +386,10 @@ class Paginator {
    * @returns {Array} - An array where elements are of type `this.type`.
    */
   async getPage(page = null) {
+    let autoPage = false;
     if (page === null) {
       page = this.page++;
+      autoPage = true;
     }
     this.parameters.page = page;
     return call(
@@ -396,6 +407,13 @@ class Paginator {
         page.push(new this.type(item));
       }
       return page;
+    }).catch(error => {
+      if ((error.code === 3201) && autoPage) {
+        this.endReached = true;
+        return [];
+      } else {
+        throw error;
+      }
     });
   }
 }
@@ -430,6 +448,7 @@ class KasupelError extends Error {
 }
 
 export {
+  Enum,
   GameMode,
   Winner,
   Conclusion,

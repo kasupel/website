@@ -1,0 +1,97 @@
+@import variables
+
+main
+  display: flex
+  align-items: flex-start
+
+.account-summary
+  display: flex
+  flex-direction: column
+
+.account-summary__details
+  text-align: center
+  h1, h2
+    margin: 0 10px
+    background: white
+    font-weight: normal
+  h2
+    color: $secondary-text-colour
+    font-size: 1.2em
+
+.account-summary__avatar
+  width: 256px
+  border-radius: 50%
+
+.game-log-viewer
+  display: flex
+  flex-grow: 999
+  flex-direction: column
+  align-items: stretch
+  justify-content: right
+  margin-left: 1rem
+
+.game-log-viewer__logs
+  border-collapse: collapse
+  box-shadow: 0 0 3rem 0 $light-shadow-colour
+  border-radius: 1rem 1rem 0 0
+  width: 100%
+  th
+    background: $highlight-1
+    color: $highlight-1-text
+    font-weight: normal
+    padding: 1rem
+    text-align: left
+    &:first-child
+      border-top-left-radius: 1rem
+    &:last-child
+      border-top-right-radius: 1rem
+  td
+    padding: 1rem
+    border: 0
+  tr:nth-child(2n) > td
+    background: $table-alternate-background
+
+.game-log-viewer__logs--complete
+  border-radius: 1rem
+  tr:last-child
+    td:first-child
+      border-bottom-left-radius: 1rem
+    td:last-child
+      border-bottom-right-radius: 1rem
+
+.game-log-viewer__switcher
+  display: flex
+  justify-content: space-between
+  text-align: center
+  border-radius: 0.5em
+  margin-bottom: 1rem
+
+.game-log-viewer__switcher__option
+  cursor: pointer
+  width: 100%
+  padding: 1em
+  border: 1px solid $game-log-switcher-border
+  position: relative
+  overflow: hidden
+  &:first-child
+    border-radius: 0.5em 0 0 0.5em
+  &:last-child
+    border-radius: 0 0.5em 0.5em 0
+  &:hover
+    background: $game-log-switcher-active
+  &::after
+    position: absolute
+    left: 50%
+    bottom: 0
+    height: 5px
+    width: 0
+    margin: 0 auto
+    content: ""
+    background: $highlight-1
+    transition: width 0.2s ease-out, left 0.2s ease-out
+
+.game-log-viewer__switcher__option--active
+  background: $game-log-switcher-active
+  &::after
+    left: 0
+    width: 100%

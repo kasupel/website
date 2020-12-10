@@ -2,6 +2,7 @@
 import {
   inputFieldError, uncaughtApiError, followRedirectHint, clearInputErrors
 } from '../utils/forms.js';
+import {login as apiLogin} from '../api/accounts.js';
 
 /** Read the form fields and attempt to login with them. */
 function login(event) {
@@ -9,7 +10,7 @@ function login(event) {
   let usernameField = document.getElementById('username-input');
   let passwordField = document.getElementById('password-input');
   clearInputErrors();
-  api.accounts.login(usernameField.value, passwordField.value).then(resp => {
+  apiLogin(usernameField.value, passwordField.value).then(resp => {
     followRedirectHint();
   }).catch(error => {
     switch (error.code) {

@@ -56,7 +56,8 @@ function getCompletedGames(username) {
  */
 function getCommonCompletedGames(username) {
   return gamePaginator(
-    '/games/common_completed', {parameters: {account: username}}
+    '/games/common_completed',
+    {parameters: {account: username}, authenticate: true}
   );
 }
 
