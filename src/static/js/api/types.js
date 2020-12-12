@@ -115,6 +115,7 @@ class User {
     if (data.hasOwnProperty('email')) {
       this.hasEmail = true;
       this.email = data.email;
+      this.emailVerified = data.email_verified;
     } else {
       this.hasEmail = false;
     }
@@ -439,7 +440,7 @@ class KasupelError extends Error {
    */
   isInDomain(domain) {
     let regex = '^';
-    for (char of domain.toString()) {
+    for (let char of domain.toString()) {
       if (char === '0') break;
       regex += char;
     }

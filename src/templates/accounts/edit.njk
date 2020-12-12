@@ -1,0 +1,75 @@
+{% extends "base.njk" %}
+{% block head %}
+  <script src='/static/js/pages/edit_account.js' type='module'></script>
+  <link rel='stylesheet' href='/static/css/forms.css'/>
+  <link rel='stylesheet' href='/static/css/edit_account.css'/>
+  <title>Edit Account - Kasupel</title>
+{% endblock %}
+{% block body %}
+  <div class="avatar-changer" id="avatar-changer">
+    <img src="/static/images/placeholder-account.svg"
+      alt="Your avatar." class="account-avatar" id="account-avatar">
+    <label for="avatar-upload" class="avatar-changer__button" id="change-avatar-button">
+      <img src="/static/images/upload.svg" alt="Change avatar"/>
+      <input type="file" id="avatar-upload" class="hidden-file-input"
+          oninput="updateAvatar()"/>
+    </button>
+  </div>
+  <h1 id="account-name">Loading...</h1>
+  <div class="email-change-form">
+    <input type="email" id="account-email" value="Loading..."
+        placeholder="Enter a new email."/>
+    <button class="form-button" onclick="updateEmail()">Save</button>
+  </div>
+  <div class="unverified-email-warning unverified-email-warning--hidden">
+    Your email address is unverified. You will not be able to start or join
+    games until you verify it.
+    <div class="unverified-email-warning__buttons">
+      <button class="small-button" id="verify-email-button"
+          onclick="show('verify-email-form')">
+        I have a verification code
+      </button>
+      <button class="small-button" id="resend-verification-button"
+          onclick="resendVerificationEmail()">
+        Resend verification email
+      </button>
+    </div>
+    <span class="verification-email-sent verification-email-sent--hidden">
+      Your email should arrive shortly.
+      Remember to check your Spam or Junk folder.
+    </span>
+    <div class="verify-email-form verify-email-form--hidden">
+      <input type="text" id="verification-code"
+          placeholder="Enter your verification code"/>
+      <button class="form-button" onclick="verifyEmail()">Verify</button>
+    </div>
+  </div>
+  <button class="small-button" id="password-change-button"
+      onclick="show('password-change-form')">
+    Change password
+  </button>
+  <table class="table-form password-change-form password-change-form--hidden">
+    <tr>
+      <td><label for="new-password">New password:</label></td>
+      <td>
+        <input type="password" id="new-password"
+            placeholder="Enter your new password"/>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="confirm-password">Confirm password:</label></td>
+      <td>
+        <input type="password" id="confirm-password"
+            placeholder="Re-enter your new password"/>
+      </td>
+    </tr>
+    <tr><td colspan="2">
+      <button class="form-button" onclick="updatePassword()">Change password</button>
+    </td></tr>
+  </table>
+  <button class="form-button" id="logout-button" onclick="logout()">Logout</button>
+  <button class="form-button form-button--danger" id="delete-button"
+      onclick="deleteAccount()">
+    Delete Account
+  </button>
+{% endblock %}

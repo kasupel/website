@@ -1,12 +1,5 @@
-import {getAuthenticatedAccount, logout as apiLogout} from './api/accounts.js';
+import {getAuthenticatedAccount} from './api/accounts.js';
 import {NotLoggedInError} from './api/utils.js';
-
-/** Logout and go to the home page. */
-function logout() {
-  apiLogout().then(() => {
-    window.location.href = '/';
-  });
-}
 
 window.getAccountPromise = getAuthenticatedAccount().then(
   account => {
@@ -35,5 +28,3 @@ window.addEventListener('load', function() {
     }
   });
 });
-
-window.logout = logout;

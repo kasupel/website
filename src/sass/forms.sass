@@ -1,14 +1,60 @@
 @import variables
 
-form
-  display: flex
-  flex-direction: column
-  align-items: center
+.table-form
+  td:first-child
+    text-align: right
+    vertical-align: top
+    padding-top: 1rem
+  tr:last-child > td
+    text-align: center
 
-input
+input, .form-button
+  -webkit-appearance: none
   margin: 5px 0
+  background: inherit
+  color: inherit
+  border-radius: 0
+  font-size: inherit
+  font-family: inherit
 
 .input-error
   color: $form-error-colour
   font-size: small
   text-align: right
+  margin: 0
+
+input[type="text"], input[type="password"], input[type="email"]
+  padding: 0.6em 1.2em
+  border: 0
+  border-bottom: 1px solid $inactive-input-border
+  transition: border 0.4s, background-size 0.4s
+  background-image: linear-gradient(transparent, transparentize($highlight-1, 0.5))
+  background-size: 100% 0
+  background-repeat: no-repeat
+  background-position: 0 100%
+  ::placeholder
+    font-size: 0.8em
+  &:focus
+    background-size: 100% 100%
+    border-bottom-color: $highlight-1
+
+input[type="submit"], .form-button
+  cursor: pointer
+  border: 1px solid $highlight-1
+  padding: 0.6em 1.2em
+  background-image: linear-gradient(135deg, $highlight-1 50%, transparent 50%)
+  background-position: 100% 0
+  background-size: 400% 100%
+  transition: background 0.8s, color 0.8s
+  &:hover
+    color: $highlight-1-text
+    background-position: 0 0
+
+.form-button--danger
+  border-color: $danger-colour
+  background-image: linear-gradient(135deg, $danger-colour 50%, transparent 50%)
+  &:hover
+    color: $danger-text-colour
+
+.hidden-file-input
+  display: none

@@ -24,7 +24,7 @@ function inputFieldError(field, message) {
   messageElement.className = 'input-error';
   const textNode = document.createTextNode(message);
   messageElement.appendChild(textNode);
-  field.parentElement.appendChild(messageElement);
+  field.insertAdjacentElement('afterend', messageElement);
 }
 
 /** Follow a redirect that was delayed (eg. until after login). */

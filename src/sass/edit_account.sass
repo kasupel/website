@@ -1,0 +1,63 @@
+@import variables
+
+main
+  display: flex
+  flex-direction: column
+  align-items: center
+  text-align: center
+
+.unverified-email-warning--hidden,
+.verification-email-sent--hidden,
+.verify-email-form--hidden,
+.password-change-form--hidden
+  display: none
+
+.account-avatar
+  object-fit: cover
+  border-radius: 50%
+  height: 256px
+  width: 256px
+
+.verify-email-form, .email-change-form
+  position: relative
+  flex-direction: row
+  justify-content: center
+  input[type="submit"]
+    margin-left: 1rem
+
+.unverified-email-warning
+  background: $warning-box-bg
+  color: $warning-box-border
+  padding: 1em
+  text-align: center
+  .input-error
+    text-align: center
+    position: absolute
+    left: 50%
+    transform: translateX(-50%)
+
+.small-button
+  background: transparent
+  border: 0
+  padding: 0
+  margin: 0.5rem
+  font-size: inherit
+  font-family: inherit
+  color: $link-blue
+  cursor: pointer
+  text-decoration: underline
+
+.avatar-changer
+  position: relative
+
+.avatar-changer__button
+  position: absolute
+  bottom: 15px
+  right: 15px
+  width: 45px
+  height: 45px
+  background: $bg-color
+  border-radius: 50%
+  padding: 6px
+  box-shadow: 0 0 1rem 0
+  cursor: pointer

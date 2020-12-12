@@ -87,14 +87,15 @@ function getGameData(viewingAccount, logType) {
  * @returns {(String|User|Enum|null)} - The data for the column.
  */
 function getLogCell(game, column, viewingAccount) {
+  const host_id = game.host ? game.host.id : null;
   switch (column) {
     case ColumnTypes.OPPONENT:
       return (
-        game.host.id !== viewingAccount.id ?
+        host_id !== viewingAccount.id ?
         game.host : game.away || game.invited
       );
     case ColumnTypes.SIDE:
-      return game.host.id === viewingAccount.id ? 'Host' : 'Away';
+      return host_id === viewingAccount.id ? 'Host' : 'Away';
     case ColumnTypes.MODE: return game.mode;
     case ColumnTypes.TIME_CONTROL: return game.timeControl.shortNotation;
     case ColumnTypes.CURRENT_TURN: return game.currentTurn;
@@ -102,9 +103,9 @@ function getLogCell(game, column, viewingAccount) {
       switch (game.winner) {
         case Winner.DRAW: return 'Draw';
         case Winner.HOME:
-          return game.host.id === viewingAccount.id ? 'Win' : 'Loss';
+          return host_id === viewingAccount.id ? 'Win' : 'Loss';
         case Winner.AWAY:
-          return game.away.id === viewingAccount.id ? 'Win' : 'Loss';
+          return host_id === viewingAccount.id ? 'Win' : 'Loss';
         default: return 'Incomplete';
       }
     case ColumnTypes.WINNER:
@@ -277,10 +278,27 @@ function showLogOptions(viewingAccount, table) {
   }
 }
 
+/** Hide the edit account link if the account does not belong to the user.
+ *
+ * @param {User} viewingAccount - The account that is being viewed.
+ */
+function hideEditLink(viewingAccount) {
+  if ((!userAccount) || (viewingAccount.id !== userAccount.id)) {
+    document.querySelectorAll('.edit-account-button').forEach(elem => {
+      elem.remove();
+    });
+  } else{
+    document.querySelectorAll('.edit-account-button--hidden').forEach(elem => {
+      elem.classList.remove('edit-account-button--hidden');
+    });
+  }
+}
+
 window.addEventListener('load', function() {
   getAccountPromise.then(_account => {
     const username = getUsernameFromUrl();
     getAccount(username).then(account => {
+      hideEditLink(account);
       if (account.avatarUrl) {
         document.getElementById('account-avatar').src = account.avatarUrl;
       }

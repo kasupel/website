@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <mask id="circle-hole">
+    <rect width="128" height="128" fill="#ffffff"/>
+    <circle style="fill:#000000" cx="64" cy="64" r="17"/>
+  </mask>
+  <circle style="fill:#000000" mask="url(#circle-hole)" cx="64" cy="64" r="45"/>
+  <rect width="40" height="21" x="89" y="53.5" transform="rotate(90, 109, 64)"
+    rx="4" style="fill:#000000"/>
+  <rect width="40" height="21" x="66.5" y="92.47114317029974"
+    transform="rotate(150, 86.5, 102.97114317029974)" rx="4" style="fill:#000000"/>
+  <rect width="40" height="21" x="21.5" y="92.47114317029974"
+    transform="rotate(210, 41.5, 102.97114317029974)" rx="4" style="fill:#000000"/>
+  <rect width="40" height="21" x="-1.0" y="53.5" transform="rotate(270, 19, 64)"
+    rx="4" style="fill:#000000"/>
+  <rect width="40" height="21" x="21.5" y="14.528856829700274"
+    transform="rotate(330, 41.5, 25.028856829700274)" rx="4" style="fill:#000000"/>
+  <rect width="40" height="21" x="66.5" y="14.52885682970026"
+    transform="rotate(390, 86.5, 25.02885682970026)" rx="4" style="fill:#000000"/>
+</svg>

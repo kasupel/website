@@ -5,12 +5,11 @@ import {
 import {login as apiLogin} from '../api/accounts.js';
 
 /** Read the form fields and attempt to login with them. */
-function login(event) {
-  event.preventDefault();
+function login() {
   let usernameField = document.getElementById('username-input');
   let passwordField = document.getElementById('password-input');
   clearInputErrors();
-  apiLogin(usernameField.value, passwordField.value).then(resp => {
+  apiLogin(usernameField.value, passwordField.value).then(() => {
     followRedirectHint();
   }).catch(error => {
     switch (error.code) {
@@ -24,7 +23,6 @@ function login(event) {
         uncaughtApiError(error);
     }
   });
-  return false;    // Don't reload the page.
 }
 
 window.login = login;

@@ -3,10 +3,12 @@
 main
   display: flex
   align-items: flex-start
+  flex-direction: row
 
 .account-summary
   display: flex
   flex-direction: column
+  position: relative
 
 .account-summary__details
   text-align: center
@@ -19,8 +21,10 @@ main
     font-size: 1.2em
 
 .account-summary__avatar
-  width: 256px
+  object-fit: cover
   border-radius: 50%
+  height: 256px
+  width: 256px
 
 .game-log-viewer
   display: flex
@@ -74,9 +78,11 @@ main
   position: relative
   overflow: hidden
   &:first-child
-    border-radius: 0.5em 0 0 0.5em
+    border-top-left-radius: 0.5em
+    border-bottom-left-radius: 0.5em
   &:last-child
-    border-radius: 0 0.5em 0.5em 0
+    border-top-right-radius: 0.5em
+    border-bottom-right-radius: 0.5em
   &:hover
     background: $game-log-switcher-active
   &::after
@@ -95,3 +101,14 @@ main
   &::after
     left: 0
     width: 100%
+
+.edit-account-button--hidden
+  display: none
+
+.edit-account-button
+  img
+    display: block
+    position: absolute
+    top: 6px
+    right: 6px
+    width: 64px
